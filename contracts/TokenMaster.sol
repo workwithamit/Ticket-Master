@@ -21,6 +21,11 @@ contract TokenMaster is ERC721 {
 
     mapping(uint256 => Occasion) occasions;
 
+    modifier onlyOwner() {
+        require(msg.sender == owner);
+        _;
+    }
+
     constructor(
         string memory _name,
         string memory _symbol
