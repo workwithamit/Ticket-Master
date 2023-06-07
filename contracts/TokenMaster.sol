@@ -86,7 +86,10 @@ contract TokenMaster is ERC721 {
         _safeMint(msg.sender, totalSupply);
     }
 
-    function getOccasion(uint256 _id) public view returns (Occasion memory) {
-        return occasions[_id];
+    
+
+    function withdraw() onlyOwner{
+        bool(success,)=owner.call{value: address(this).balance}("");
+        require(success);
     }
 }
