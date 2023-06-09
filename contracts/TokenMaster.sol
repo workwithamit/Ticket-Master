@@ -47,8 +47,7 @@ contract TokenMaster is ERC721 {
         uint256 _maxTickets,
         string memory _date,
         string memory _time,
-        string memory _location,
-        
+        string memory _location
     ) public onlyOwner {
         totalOccasions++;
         occasions[totalOccasions] = Occasion(
@@ -60,7 +59,6 @@ contract TokenMaster is ERC721 {
             _date,
             _time,
             _location
-            
         );
     }
 
@@ -73,12 +71,13 @@ contract TokenMaster is ERC721 {
         //check for ETH amount
         int256 currentPrice = getLatestPrice();
         require(currentPrice > 0); // Price must be positive
-        uint256 scalingFactor = 100; 
+        uint256 scalingFactor = 100;
 
         //calculatedCost is the amount of ETH that has to be paid
 
-        uint256 calculatedCost = (occasions[_id].cost * scalingFactor)/uint256(currentPrice); //<-- two decimal places
-        
+        uint256 calculatedCost = (occasions[_id].cost * scalingFactor) /
+            uint256(currentPrice); //<-- two decimal places
+
         require(msg.value >= calculatedCost);
 
         //check for seats
@@ -115,8 +114,7 @@ contract TokenMaster is ERC721 {
     }
 
     function getLatestPrice() public view returns (int) {
-        
-        (,int answer,,,) = priceFeed.latestRoundData();
+        (, int answer, , , ) = priceFeed.latestRoundData();
         return answer;
     }
 }
