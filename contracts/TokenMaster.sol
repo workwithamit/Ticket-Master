@@ -8,6 +8,7 @@ contract TokenMaster is ERC721 {
     address public owner;
     uint256 public totalOccasions;
     uint256 public totalSupply; //<-- number of minted tickets
+    AggregatorV3Interface internal priceFeed;
 
     struct Occasion {
         uint256 id;
@@ -18,7 +19,6 @@ contract TokenMaster is ERC721 {
         string date;
         string time;
         string location;
-        address priceFeed; // <-- Chainlink Price Feed address
     }
 
     mapping(uint256 => Occasion) occasions;
@@ -36,6 +36,9 @@ contract TokenMaster is ERC721 {
         string memory _symbol
     ) ERC721(_name, _symbol) {
         owner = msg.sender;
+        priceFeed = AggregatorV3Interface(
+            0x694AA1769357215DE4FAC081bf1f309aDC325306
+        );
     }
 
     function list(
@@ -45,7 +48,7 @@ contract TokenMaster is ERC721 {
         string memory _date,
         string memory _time,
         string memory _location,
-        address _priceFeed
+        
     ) public onlyOwner {
         totalOccasions++;
         occasions[totalOccasions] = Occasion(
@@ -57,7 +60,7 @@ contract TokenMaster is ERC721 {
             _date,
             _time,
             _location,
-            _priceFeed
+            
         );
     }
 
@@ -68,10 +71,14 @@ contract TokenMaster is ERC721 {
         require(_id <= totalOccasions);
 
         //check for ETH amount
-        int256 currentPrice = getLatestPrice(occasions[_id].priceFeed);
+        int256 currentPrice = getLatestPrice();
         require(currentPrice > 0); // Price must be positive
+        uint256 scalingFactor = 100; 
 
-        uint256 calculatedCost = uint256(currentPrice) * occasions[_id].cost;
+        //calculatedCost is the amount of ETH that has to be paid
+
+        uint256 calculatedCost = (occasions[_id].cost * scalingFactor)/uint256(currentPrice); //<-- two decimal places
+        
         require(msg.value >= calculatedCost);
 
         //check for seats
@@ -107,13 +114,9 @@ contract TokenMaster is ERC721 {
         require(success);
     }
 
-    function getLatestPrice(
-        address priceFeedAddress
-    ) internal view returns (int256) {
-        AggregatorV3Interface priceFeed = AggregatorV3Interface(
-            priceFeedAddress
-        );
-        (, int256 price, , , ) = priceFeed.latestRoundData();
-        return price;
+    function getLatestData() public view returns (int) {
+        
+        (,int answer,,,) = dataFeed.latestRoundData();
+        return answer;
     }
 }
