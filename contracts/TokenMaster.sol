@@ -59,7 +59,7 @@ contract TokenMaster is ERC721 {
             _maxTickets,
             _date,
             _time,
-            _location,
+            _location
             
         );
     }
@@ -114,9 +114,9 @@ contract TokenMaster is ERC721 {
         require(success);
     }
 
-    function getLatestData() public view returns (int) {
+    function getLatestPrice() public view returns (int) {
         
-        (,int answer,,,) = dataFeed.latestRoundData();
+        (,int answer,,,) = priceFeed.latestRoundData();
         return answer;
     }
 }
