@@ -18,6 +18,7 @@ contract TokenMaster is ERC721 {
         string date;
         string time;
         string location;
+        address priceFeed; // <-- Chainlink Price Feed address
     }
 
     mapping(uint256 => Occasion) occasions;
@@ -43,7 +44,8 @@ contract TokenMaster is ERC721 {
         uint256 _maxTickets,
         string memory _date,
         string memory _time,
-        string memory _location
+        string memory _location,
+        address _priceFeed
     ) public onlyOwner {
         totalOccasions++;
         occasions[totalOccasions] = Occasion(
@@ -54,7 +56,8 @@ contract TokenMaster is ERC721 {
             _maxTickets,
             _date,
             _time,
-            _location
+            _location,
+            _priceFeed
         );
     }
 
@@ -65,7 +68,11 @@ contract TokenMaster is ERC721 {
         require(_id <= totalOccasions);
 
         //check for ETH amount
-        require(msg.value >= occasions[_id].cost);
+        int256 currentPrice = getLatestPrice(occasions[_id].priceFeed);
+        require(currentPrice > 0); // Price must be positive
+
+        uint256 calculatedCost = uint256(currentPrice) * occasions[_id].cost;
+        require(msg.value >= calculatedCost);
 
         //check for seats
         require(seatTaken[_id][_seat] == address(0));
@@ -98,5 +105,15 @@ contract TokenMaster is ERC721 {
     function withdraw() public onlyOwner {
         (bool success, ) = owner.call{value: address(this).balance}("");
         require(success);
+    }
+
+    function getLatestPrice(
+        address priceFeedAddress
+    ) internal view returns (int256) {
+        AggregatorV3Interface priceFeed = AggregatorV3Interface(
+            priceFeedAddress
+        );
+        (, int256 price, , , ) = priceFeed.latestRoundData();
+        return price;
     }
 }
