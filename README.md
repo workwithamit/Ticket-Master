@@ -11,6 +11,12 @@ npm install
 
 ```
 
+## Testing
+
+```
+npx hardhat test
+```
+
 ## Usage
 
 Deploy:
@@ -24,12 +30,4 @@ execute deploy script in diffrent terminal
 
 ```
 npx hardhat run ./script/deploy.js --network localhost
-```
-
-## Testing
-
-```
-
-npx hardhat test
-
 ```
