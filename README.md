@@ -5,7 +5,7 @@ It is a clone of ticket master using blockchain
 ## QuikStart
 
 ```
-git clone https://github.com/workwithamit/Token-Master
+git clone https://github.com/workwithamit/TicketChainX
 cd Token-Master
 npm install
 
