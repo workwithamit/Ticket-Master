@@ -1,4 +1,4 @@
-# Ticket-Master
+# TicketChainX
 
 It is a clone of ticket master using blockchain
 
