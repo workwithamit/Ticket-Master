@@ -6,7 +6,7 @@ It is a clone of ticket master using blockchain
 
 ```
 git clone https://github.com/workwithamit/TicketChainX
-cd Token-Master
+cd TicketChainX
 npm install
 
 ```
